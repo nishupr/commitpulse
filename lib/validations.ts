@@ -169,6 +169,21 @@ export const streakParamsSchema = z.object({
       },
       { message: 'Invalid "to" date format. Use ISO 8601 (e.g. 2023-12-31).' }
     ),
+  tz: z
+    .string()
+    .optional()
+    .refine(
+      (val) => {
+        if (!val) return true;
+        try {
+          new Intl.DateTimeFormat(undefined, { timeZone: val });
+          return true;
+        } catch {
+          return false;
+        }
+      },
+      { message: 'Invalid timezone. Must be a valid IANA timezone (e.g. America/New_York).' }
+    ),
   refresh: z.string().optional().transform(toRefreshFlag),
   hide_title: z.string().optional().transform(toBooleanFlag),
   hide_background: z.string().optional().transform(toBooleanFlag),
