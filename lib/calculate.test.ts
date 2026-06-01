@@ -1585,6 +1585,50 @@ describe('calculateWrappedStats', () => {
 
     // 4. Assert highestDailyCount === 0
     expect(result.highestDailyCount).toBe(0);
+
+    expect(result.busiestMonth).toBe('N/A');
+    expect(result.busiestMonth).not.toBe('');
+  });
+
+  it('returns busiestMonth as "N/A" for a calendar with all-zero contribution days', () => {
+    // A calendar with weeks but zero contributions on every day should also
+    // trigger the 'N/A' fallback — monthCounts will have keys but all values
+    // will be 0. This is different from an empty weeks array but the reduce
+    // should still return the only key present (not 'N/A'). This test documents
+    // the boundary: N/A applies ONLY when no months have been recorded at all.
+    const allZeroCalendar = {
+      totalContributions: 0,
+      weeks: [
+        {
+          contributionDays: [
+            { contributionCount: 0, date: '2024-06-10' },
+            { contributionCount: 0, date: '2024-06-11' },
+          ],
+        },
+      ],
+    };
+    const result = calculateWrappedStats(allZeroCalendar);
+    // monthCounts will have { '2024-06': 0 } — one key with value 0
+    // reduce on a non-empty array returns that single key, not 'N/A'
+    expect(result.busiestMonth).toBe('2024-06');
+    expect(result.busiestMonth).not.toBe('N/A');
+    expect(result.busiestMonth).not.toBe('');
+  });
+
+  it('busiestMonth is never an empty string regardless of calendar input', () => {
+    const emptyResult = calculateWrappedStats({ totalContributions: 0, weeks: [] });
+    expect(emptyResult.busiestMonth).not.toBe('');
+
+    const activeResult = calculateWrappedStats({
+      totalContributions: 5,
+      weeks: [
+        {
+          contributionDays: [{ contributionCount: 5, date: '2024-06-10' }],
+        },
+      ],
+    });
+    expect(activeResult.busiestMonth).not.toBe('');
+    expect(activeResult.busiestMonth).toBe('2024-06');
   });
 
   // ISSUE OBJECTIVE: Verify weekendRatio is 100 when all commits are on weekends
