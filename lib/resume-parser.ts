@@ -1,4 +1,11 @@
 import type { ParsedResume, Education, Experience } from '@/types/student';
+import mammoth from 'mammoth';
+
+// Polyfill DOMMatrix for server-side/test environments to prevent pdfjs-dist crash
+if (typeof globalThis !== 'undefined' && !('DOMMatrix' in globalThis)) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  (globalThis as any).DOMMatrix = class DOMMatrix {};
+}
 
 const EMAIL_REGEX = /[\w.-]+@[\w.-]+\.\w+/;
 const NAME_LINE_REGEX = /^([A-Z][a-z]+(?:\s+[A-Z][a-z]+)+)/;
@@ -108,10 +115,44 @@ function extractExperience(text: string): Experience[] {
   return experience;
 }
 
-function extractTextFromBuffer(buffer: Buffer, _mimeType: string): string {
-  void _mimeType;
-  const text = buffer.toString('utf-8');
-  const printable = text
+async function extractTextFromBuffer(buffer: Buffer, mimeType: string): Promise<string> {
+  let rawText = '';
+
+  if (mimeType === 'application/pdf') {
+    try {
+      if (buffer.toString('utf-8', 0, 4) === '%PDF') {
+        const pdf = await import('pdf-parse');
+        const pdfParser = ((pdf as unknown as { default?: unknown }).default || pdf) as (
+          dataBuffer: Buffer,
+          options?: unknown
+        ) => Promise<{ text: string }>;
+        const data = await pdfParser(buffer);
+        rawText = data.text;
+      } else {
+        rawText = buffer.toString('utf-8');
+      }
+    } catch {
+      rawText = buffer.toString('utf-8');
+    }
+  } else if (
+    mimeType === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' ||
+    mimeType === 'application/msword'
+  ) {
+    try {
+      if (buffer.toString('utf-8', 0, 2) === 'PK') {
+        const result = await mammoth.extractRawText({ buffer });
+        rawText = result.value;
+      } else {
+        rawText = buffer.toString('utf-8');
+      }
+    } catch {
+      rawText = buffer.toString('utf-8');
+    }
+  } else {
+    rawText = buffer.toString('utf-8');
+  }
+
+  const printable = rawText
     .replace(/[^\x20-\x7E\n\r]/g, ' ')
     .replace(/[ \t]+/g, ' ')
     .replace(/\r/g, '')
@@ -137,7 +178,7 @@ function extractPhone(text: string): string {
 }
 
 export async function parseResume(buffer: Buffer, mimeType: string): Promise<ParsedResume> {
-  const rawText = extractTextFromBuffer(buffer, mimeType);
+  const rawText = await extractTextFromBuffer(buffer, mimeType);
 
   return {
     name: extractName(rawText),
