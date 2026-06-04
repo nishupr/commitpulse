@@ -26,11 +26,10 @@ describe('ThemeToggleButton Interactivity & Touch Events (Real Component Verific
     if (!document.startViewTransition) {
       document.startViewTransition = (callback: () => void) => {
         callback();
-        return { finished: Promise.resolve() };
+        return { finished: Promise.resolve() } as unknown as ViewTransition;
       };
     }
   });
-
   // Test Case 1: Mouse Enter Gesture Trigger
   it('should respond to mouseenter events on the active button layout structure', () => {
     render(<ThemeToggleButton />);
