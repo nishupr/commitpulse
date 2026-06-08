@@ -362,7 +362,7 @@ describe('LandingPage', () => {
     });
 
     // Dismiss guide
-    const dismissButton = screen.getByLabelText('Dismiss guide');
+    const dismissButton = screen.getByRole('button', { name: /dismiss|close/i });
     fireEvent.click(dismissButton);
 
     await waitFor(() => {
