@@ -82,11 +82,11 @@ export interface DashboardData {
   popularRepos?: Repository[];
   pinnedRepos?: Repository[];
   hallOfFame?: HallOfFameAward[];
-  allRepos?: RepoActivityInfo[];
 }
 
 interface DashboardClientProps {
   initialData: DashboardData;
+  allRepoActivity?: RepoActivityInfo[];
   username: string;
   compareData?: DashboardData | null;
   period: DashboardPeriod;
@@ -321,6 +321,7 @@ function getPersonalityTags(
 
 export default function DashboardClient({
   initialData,
+  allRepoActivity = [],
   username,
   compareData = null,
   period,
@@ -732,7 +733,7 @@ export default function DashboardClient({
               pinnedRepos={initialData.pinnedRepos || []}
             />
 
-            <InactiveRepoReminder repos={initialData.allRepos || []} />
+            <InactiveRepoReminder repos={allRepoActivity} />
           </aside>
 
           <div className="col-span-1 lg:col-span-3">

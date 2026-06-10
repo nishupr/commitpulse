@@ -1793,12 +1793,6 @@ export async function getFullDashboardData(username: string, options: FetchOptio
     hallOfFame: finalHallOfFame,
     graphData: { nodes, links },
     lastSyncedAt: calendarData.lastSyncedAt,
-    allRepos: reposData.map((r) => ({
-      name: r.name,
-      url: `https://github.com/${r.owner?.login || profileData.login}/${r.name}`,
-      pushedAt: r.pushed_at ?? r.updated_at ?? null,
-      isPrivate: r.private ?? false,
-    })),
   };
 }
 
