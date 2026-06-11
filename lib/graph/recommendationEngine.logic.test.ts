@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { getRecommendations } from './recommendationEngine';
 
-describe('Recommendation Engine Theme Contrast Cohesion', () => {
+describe('Recommendation Engine Logic Validation', () => {
   it('returns recommendations with scores within valid percentage range', () => {
     const recommendations = getRecommendations(['react']);
 
