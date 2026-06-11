@@ -32,7 +32,7 @@ function makeRequest(params: Record<string, string> = {}) {
   return new Request(url.toString());
 }
 
-describe('ApiStreakRoute accessibility', () => {
+describe('ApiStreakRoute SVG output', () => {
   beforeEach(() => {
     vi.clearAllMocks();
 
@@ -42,7 +42,7 @@ describe('ApiStreakRoute accessibility', () => {
     } as never);
   });
 
-  it('contains an accessible SVG title', async () => {
+  it('contains SVG title metadata', async () => {
     const response = await GET(makeRequest({ user: 'octocat' }));
     const body = await response.text();
 
@@ -50,7 +50,7 @@ describe('ApiStreakRoute accessibility', () => {
     expect(body).toContain('Stats for');
   });
 
-  it('contains a valid SVG root element for screen readers', async () => {
+  it('contains a valid SVG root element', async () => {
     const response = await GET(makeRequest({ user: 'octocat' }));
     const body = await response.text();
 
@@ -58,10 +58,11 @@ describe('ApiStreakRoute accessibility', () => {
     expect(body).toContain('xmlns="http://www.w3.org/2000/svg"');
   });
 
-  it('returns accessible SVG for keyboard and assistive technologies', async () => {
+  it('returns a valid SVG document', async () => {
     const response = await GET(makeRequest({ user: 'octocat' }));
 
     expect(response.status).toBe(200);
+    expect(response.headers.get('Content-Type')).toContain('image/svg+xml');
 
     const body = await response.text();
 
