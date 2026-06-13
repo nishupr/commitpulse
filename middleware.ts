@@ -4,14 +4,14 @@ import { rateLimit } from './lib/rate-limit';
 import { getClientIp } from './utils/getClientIp';
 
 /**
- * Proxy to enforce rate limiting on specific API routes.
+ * Middleware to enforce rate limiting on specific API routes.
  *
  * Next.js requires this file to be named `middleware.ts` at the project root
  * and to export a function named `middleware` (and optionally `config`).
  *
  * @see https://nextjs.org/docs/app/building-your-application/routing/middleware
  */
-export async function proxy(request: NextRequest) {
+export async function middleware(request: NextRequest) {
   // Use Vercel's ip property if available, fallback to headers, then localhost
   const ip =
     request.headers.get('x-forwarded-for')?.split(',')[0] ??
@@ -44,8 +44,8 @@ export async function proxy(request: NextRequest) {
 }
 
 /**
- * Configure which routes should trigger this proxy.
- * Using a matcher is more efficient than checking pathnames inside the proxy.
+ * Configure which routes should trigger this middleware.
+ * Using a matcher is more efficient than checking pathnames inside the middleware.
  */
 export const config = {
   matcher: [
