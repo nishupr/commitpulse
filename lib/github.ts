@@ -897,8 +897,8 @@ async function fetchContributionsUncached(
         }
         return {
           ...rawDay,
-          locAdditions: Math.max(1, Math.floor(Math.random() * (count * 10))),
-          locDeletions: Math.floor(Math.random() * (count * 5)),
+          locAdditions: null, // GitHub API does not expose per-day LOC data
+          locDeletions: null, // GitHub API does not expose per-day LOC data
         };
       }),
     };
