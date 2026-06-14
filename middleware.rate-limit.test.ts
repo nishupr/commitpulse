@@ -7,7 +7,7 @@ vi.mock('./lib/rate-limit', () => ({
   rateLimit: vi.fn(),
 }));
 
-describe('Proxy rate-limit consistency', () => {
+describe('Middleware rate-limit consistency', () => {
   it('returns consistent JSON error shape when rate limit is exceeded', async () => {
     vi.mocked(rateLimit).mockResolvedValue({
       success: false,
@@ -85,7 +85,7 @@ describe('Proxy rate-limit consistency', () => {
     }
   });
 
-  it('exports middleware function and config from proxy.ts', async () => {
+  it('exports middleware function and config from middleware.ts', async () => {
     const mod = await import('./middleware');
     expect(typeof mod.middleware).toBe('function');
     expect(mod.config).toBeDefined();

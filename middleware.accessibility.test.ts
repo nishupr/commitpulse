@@ -7,7 +7,7 @@ vi.mock('./lib/rate-limit', () => ({
   rateLimit: vi.fn(),
 }));
 
-describe('proxy.accessibility - Middleware Responsibilities (JSON responses, rate limits, headers)', () => {
+describe('middleware.accessibility - Middleware Responsibilities (JSON responses, rate limits, headers)', () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });

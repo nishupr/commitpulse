@@ -9,7 +9,7 @@ function makeRequest(ip: string, xff?: string): NextRequest {
   return new NextRequest('http://localhost:3000/api/streak?user=octocat', { headers });
 }
 
-describe('proxy massive-scaling: Massive Data Sets and Extreme High Bounds Scaling', () => {
+describe('middleware massive-scaling: Massive Data Sets and Extreme High Bounds Scaling', () => {
   it('processes 1000 requests from distinct IPs successfully within the rate limit', async () => {
     const start = performance.now();
 
